@@ -82,14 +82,14 @@ const ChecklistHistory = ({ onLoadChecklist, onBack }) => {
   };
 
   // Handle view checklist
-  const handleViewChecklist = (id) => {
-    const checklist = getChecklistById(id);
+  const handleViewChecklist = async (id) => {
+    const checklist = await getChecklistById(id);
     setViewingChecklist(checklist);
   };
 
   // Handle load checklist for editing
-  const handleLoadChecklist = (id) => {
-    const checklist = getChecklistById(id);
+  const handleLoadChecklist = async (id) => {
+    const checklist = await getChecklistById(id);
     if (checklist && onLoadChecklist) {
       onLoadChecklist(checklist);
     }

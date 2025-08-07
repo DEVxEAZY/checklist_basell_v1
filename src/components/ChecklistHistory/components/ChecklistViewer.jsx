@@ -1,6 +1,20 @@
 import React from 'react';
 
 const ChecklistViewer = ({ checklist, onBack, onLoad }) => {
+  // Add safety checks for undefined checklist or its properties
+  if (!checklist) {
+    return (
+      <div className="viewer-container">
+        <div className="viewer-header">
+          <button onClick={onBack} className="back-button">
+            ← Voltar
+          </button>
+          <h1>Carregando...</h1>
+        </div>
+      </div>
+    );
+  }
+
   // Add safety check for checklist object
   if (!checklist) {
     return (
