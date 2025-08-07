@@ -119,8 +119,11 @@ const ConvertVideoToFrames = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Sistema BASELL - Checklist Digital</h1>
+    <div className="checklist-container">
+      <div className="checklist-header">
+        <h1 className="checklist-title">Sistema BASELL</h1>
+        <p className="checklist-subtitle">Checklist Digital de Inspeção Veicular</p>
+      </div>
 
       {/* Renderizar conteúdo baseado na etapa atual */}
       {currentStage === 1 ? (
@@ -153,19 +156,9 @@ const ConvertVideoToFrames = () => {
       )}
 
       {/* Botão Limpar Tudo */}
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <button 
-          onClick={clearAllChecks} 
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#607D8B',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          Limpar Checklist Completo
+      <div className="action-buttons">
+        <button onClick={clearAllChecks} className="action-btn secondary">
+          🗑️ Limpar Checklist Completo
         </button>
         <button 
           onClick={() => {
@@ -175,17 +168,9 @@ const ConvertVideoToFrames = () => {
             console.log('Etapa atual:', currentStage);
             alert('Verifique o console para debug das inspeções visuais');
           }}
-          style={{
-            padding: '10px 20px',
-            marginLeft: '10px',
-            backgroundColor: '#FF5722',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
+          className="action-btn danger"
         >
-          Debug Inspeções Visuais
+          🐛 Debug Inspeções Visuais
         </button>
       </div>
 

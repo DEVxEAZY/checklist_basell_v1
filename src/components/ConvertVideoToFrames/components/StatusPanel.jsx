@@ -8,18 +8,30 @@ const StatusPanel = ({
   additionalInfo = [] 
 }) => {
   return (
-    <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e8f5e8', borderRadius: '8px' }}>
-      <h3>{title}</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
-        <div>
-          <strong>Verificações Concluídas:</strong> {completedCount}/{totalCount}
+    <div>
+      <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', fontWeight: '600' }}>{title}</h3>
+      <div className="stats-grid">
+        <div className="stat-item">
+          <div className="stat-icon success">📊</div>
+          <div className="stat-content">
+            <p className="stat-label">Verificações Concluídas</p>
+            <p className="stat-value">{completedCount}/{totalCount}</p>
+          </div>
         </div>
-        <div>
-          <strong>Status:</strong> {status}
+        <div className="stat-item">
+          <div className="stat-icon info">📋</div>
+          <div className="stat-content">
+            <p className="stat-label">Status</p>
+            <p className="stat-value">{status}</p>
+          </div>
         </div>
         {additionalInfo.map((info, index) => (
-          <div key={index}>
-            <strong>{info.label}:</strong> {info.value}
+          <div key={index} className="stat-item">
+            <div className="stat-icon info">📈</div>
+            <div className="stat-content">
+              <p className="stat-label">{info.label}</p>
+              <p className="stat-value">{info.value}</p>
+            </div>
           </div>
         ))}
       </div>

@@ -13,54 +13,32 @@ const VideoControls = ({
   return (
     <div>
       {/* Botões de controle */}
-      <div style={{ marginBottom: '20px' }}>
-        <button 
-          onClick={startCapture} 
+      <div className="action-buttons">
+        <button
+          onClick={startCapture}
           disabled={isCapturing || currentInspectionData?.isCompleted}
-          style={{
-            padding: '10px 20px',
-            marginRight: '10px',
-            backgroundColor: isCapturing || currentInspectionData?.isCompleted ? '#ccc' : '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: isCapturing || currentInspectionData?.isCompleted ? 'not-allowed' : 'pointer'
-          }}
+          className={`action-btn ${
+            isCapturing || currentInspectionData?.isCompleted ? 'secondary' : 'success'
+          }`}
         >
-          {isCapturing ? 'Documentando...' : `Iniciar ${currentInspectionData?.name}`}
+          {isCapturing ? '📹 Documentando...' : `▶️ Iniciar ${currentInspectionData?.name}`}
         </button>
-        <button 
-          onClick={stopCapture} 
+        <button
+          onClick={stopCapture}
           disabled={!isCapturing}
-          style={{
-            padding: '10px 20px',
-            marginRight: '10px',
-            backgroundColor: !isCapturing ? '#ccc' : '#f44336',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: !isCapturing ? 'not-allowed' : 'pointer'
-          }}
+          className={`action-btn ${!isCapturing ? 'secondary' : 'danger'}`}
         >
-          Finalizar Inspeção
+          ⏹️ Finalizar Inspeção
         </button>
         
         {/* Mostrar botão de gerar PDF apenas quando todas as inspeções estiverem completas */}
         {completedVisualInspections === 5 && (
-          <button 
-            onClick={generatePDF} 
+          <button
+            onClick={generatePDF}
             disabled={totalFrames === 0}
-            style={{
-              padding: '10px 20px',
-              marginRight: '10px',
-              backgroundColor: totalFrames === 0 ? '#ccc' : '#9C27B0',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: totalFrames === 0 ? 'not-allowed' : 'pointer'
-            }}
+            className={`action-btn ${totalFrames === 0 ? 'secondary' : 'primary'}`}
           >
-            Gerar PDF ({totalFrames} fotos)
+            📄 Gerar PDF ({totalFrames} fotos)
           </button>
         )}
       </div>
