@@ -18,12 +18,25 @@ export const useSupabaseChecklistHistory = () => {
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        if (error.message.includes('Supabase not configured')) {
+          console.warn('Using empty checklist data due to missing Supabase configuration')
+          setChecklists([])
+          return
+        }
+        throw error
+      }
 
       setChecklists(data || [])
     } catch (error) {
       console.error('Error loading checklists:', error)
-      alert('Erro ao carregar histórico de checklists')
+      if (error.message && error.message.includes('Failed to fetch')) {
+        console.warn('Network error - using empty checklist data')
+        setChecklists([])
+      } else {
+        alert('Erro ao carregar histórico de checklists: ' + (error.message || 'Erro desconhecido'))
+      }
     } finally {
       setLoading(false)
     }

@@ -11,23 +11,35 @@ if (!supabaseUrl || !supabaseAnonKey) {
   })
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Create a mock client if environment variables are missing
+export const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false, // Disable auth for now
     autoRefreshToken: false,
     detectSessionInUrl: false
   }
-})
+}) : {
+  from: () => ({
+    select: () => Promise.resolve({ data: [], error: { message: 'Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.' } }),
+    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    update: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    delete: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } })
+  })
+}
 
 // Test connection
-supabase.from('checklists').select('count', { count: 'exact', head: true })
-  .then(({ error, count }) => {
-    if (error) {
-      console.error('Supabase connection error:', error)
-    } else {
-      console.log('Supabase connected successfully. Checklists count:', count)
-    }
-  })
+if (supabaseUrl && supabaseAnonKey) {
+  supabase.from('checklists').select('count', { count: 'exact', head: true })
+    .then(({ error, count }) => {
+      if (error) {
+        console.error('Supabase connection error:', error)
+      } else {
+        console.log('Supabase connected successfully. Checklists count:', count)
+      }
+    })
+} else {
+  console.warn('Supabase client not initialized due to missing environment variables')
+}
 
 // Helper function to convert blob to base64
 export const blobToBase64 = (blob) => {
