@@ -25,7 +25,7 @@ const ChecklistHistory = ({ onLoadChecklist, onBack }) => {
     getStatistics,
     clearAllChecklists,
     exportChecklists
-  } = useChecklistHistory();
+  } = useSupabaseChecklistHistory();
 
   const [selectedChecklists, setSelectedChecklists] = useState([]);
   const [viewingChecklist, setViewingChecklist] = useState(null);
