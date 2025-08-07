@@ -687,6 +687,8 @@ body {
   margin-bottom: var(--space-2);
   border-color: #3b82f6;
   color: #3b82f6;
+}
+
 .inspection-status-mobile {
   font-size: var(--font-size-xs);
 /* Selection Actions */
