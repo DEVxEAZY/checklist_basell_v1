@@ -8,8 +8,7 @@ const HistoryTable = ({
   onSelectAll,
   onView,
   onLoad,
-  onDelete,
-  onDuplicate
+  onDelete
 }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('pt-BR');
@@ -165,14 +164,6 @@ const HistoryTable = ({
                   <span className="action-text">Editar</span>
                 </button>
                 <button
-                  onClick={() => onDuplicate(checklist.id)}
-                  className="action-btn-mobile duplicate"
-                  title="Duplicar Checklist"
-                >
-                  <span className="action-icon">📋</span>
-                  <span className="action-text">Duplicar</span>
-                </button>
-                <button
                   onClick={() => onDelete(checklist.id)}
                   className="action-btn-mobile delete"
                   title="Excluir"
@@ -275,13 +266,6 @@ const HistoryTable = ({
                         title="Carregar para Edição"
                       >
                         📝
-                      </button>
-                      <button
-                        onClick={() => onDuplicate(checklist.id)}
-                        className="btn btn-sm btn-secondary"
-                        title="Duplicar Checklist"
-                      >
-                        📋
                       </button>
                       <button
                         onClick={() => onDelete(checklist.id)}
