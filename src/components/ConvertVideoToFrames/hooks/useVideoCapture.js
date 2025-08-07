@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { videoStorageManager } from '../../../utils/videoStorage';
+import { quickCompressVideo, getVideoInfo, needsVideoCompression } from '../../../utils/videoCompression';
 
 export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsComplete, nextInspection, resetCurrentInspection) => {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -88,17 +89,8 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
           type: 'video/webm'
         });
         
-        // Store video temporarily
-        if (currentInspectionId) {
-          console.log('📹 Storing temporary video for inspection:', currentInspectionId);
-          videoStorageManager.storeTempVideo(currentInspectionId, blob, {
-            inspectionName: `Inspection ${currentInspectionId}`,
-            captureSession: new Date().toISOString()
-          });
-        }
-        
-        setRecordedVideoBlob(blob);
-        setIsRecording(false);
+        // Compress and store video
+        compressAndStoreVideo(blob);
       };
       
       mediaRecorderRef.current = mediaRecorder;
@@ -119,6 +111,68 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
     }
   };
   // Função 2: Captura Automática de Frames (fixo 3 segundos)
+  // Função para comprimir vídeo antes do armazenamento
+  const compressAndStoreVideo = async (videoBlob) => {
+    try {
+      console.log('🎬 Processing recorded video...');
+      
+      // Get original video info
+      const originalInfo = await getVideoInfo(videoBlob);
+      console.log('📊 Original video info:', originalInfo);
+      
+      let finalVideoBlob = videoBlob;
+      
+      // Compress if video is larger than 3MB
+      if (needsVideoCompression(videoBlob, 3)) {
+        console.log('🗜️ Video needs compression, starting compression...');
+        
+        try {
+          finalVideoBlob = await quickCompressVideo(videoBlob);
+          
+          // Get compressed video info
+          const compressedInfo = await getVideoInfo(finalVideoBlob);
+          console.log('✅ Compressed video info:', compressedInfo);
+          
+          const compressionRatio = ((originalInfo.size - compressedInfo.size) / originalInfo.size * 100).toFixed(1);
+          console.log(`📉 Compression saved ${compressionRatio}% (${originalInfo.sizeMB}MB → ${compressedInfo.sizeMB}MB)`);
+          
+        } catch (compressionError) {
+          console.warn('⚠️ Video compression failed, using original:', compressionError);
+          finalVideoBlob = videoBlob; // Fallback to original
+        }
+      } else {
+        console.log('✅ Video size is acceptable, no compression needed');
+      }
+      
+      // Store video temporarily
+      if (currentInspectionId) {
+        console.log('📹 Storing processed video for inspection:', currentInspectionId);
+        videoStorageManager.storeTempVideo(currentInspectionId, finalVideoBlob, {
+          inspectionName: `Inspection ${currentInspectionId}`,
+          captureSession: new Date().toISOString(),
+          originalSize: originalInfo.size,
+          compressedSize: finalVideoBlob.size,
+          compressionApplied: finalVideoBlob !== videoBlob
+        });
+      }
+      
+      setRecordedVideoBlob(finalVideoBlob);
+      setIsRecording(false);
+      
+    } catch (error) {
+      console.error('❌ Error processing video:', error);
+      // Fallback: store original video
+      if (currentInspectionId) {
+        videoStorageManager.storeTempVideo(currentInspectionId, videoBlob, {
+          inspectionName: `Inspection ${currentInspectionId}`,
+          captureSession: new Date().toISOString(),
+          processingError: error.message
+        });
+      }
+      setRecordedVideoBlob(videoBlob);
+      setIsRecording(false);
+    }
+  };
   const startAutoCapture = () => {
     captureTimeRef.current = 0;
     
