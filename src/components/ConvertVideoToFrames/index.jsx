@@ -1,6 +1,8 @@
 import React from 'react';
+import ChecklistHistory from '../ChecklistHistory';
 import { generateChecklistWithData } from '../pdfTemplate';
 import { PDF_OPTIONS } from './constants/inspectionData';
+import { useChecklistHistory } from '../../hooks/useChecklistHistory';
 
 // Hooks
 import { useBasicChecks } from './hooks/useBasicChecks';
@@ -15,6 +17,12 @@ import ConfirmationPopup from './components/ConfirmationPopup';
 import InspectionStatusPopup from './components/InspectionStatusPopup';
 
 const ConvertVideoToFrames = () => {
+  const [currentView, setCurrentView] = React.useState('checklist'); // 'checklist' or 'history'
+  const [loadedChecklistId, setLoadedChecklistId] = React.useState(null);
+  
+  // History hook
+  const { saveChecklist, updateChecklist, getChecklistById } = useChecklistHistory();
+
   // Hooks
   const {
     basicChecks,
@@ -67,6 +75,57 @@ const ConvertVideoToFrames = () => {
     resetCurrentInspection
   );
 
+  // Function to save current checklist
+  const saveCurrentChecklist = () => {
+    const checklistData = {
+      basicChecks: basicChecks,
+      visualInspections: visualInspections
+    };
+
+    if (loadedChecklistId) {
+      // Update existing checklist
+      updateChecklist(loadedChecklistId, checklistData, vehicleInfo);
+      alert('Checklist atualizado com sucesso!');
+    } else {
+      // Save new checklist
+      const newId = saveChecklist(checklistData, vehicleInfo);
+      setLoadedChecklistId(newId);
+      alert('Checklist salvo com sucesso!');
+    }
+  };
+
+  // Function to load checklist from history
+  const loadChecklistFromHistory = (checklist) => {
+    // Load vehicle info
+    Object.keys(checklist.vehicleInfo).forEach(key => {
+      updateVehicleInfo(key, checklist.vehicleInfo[key]);
+    });
+
+    // Load basic checks
+    checklist.basicChecks.forEach(check => {
+      if (check.isCompleted) {
+        updateBasicCheck(check.id, check.status, check.observation);
+      }
+      if (check.observation) {
+        updateBasicCheckObservation(check.id, check.observation);
+      }
+    });
+
+    // Load visual inspections (simplified - frames won't be restored)
+    // This is because frames contain large data URLs that would make storage impractical
+    
+    setLoadedChecklistId(checklist.id);
+    setCurrentView('checklist');
+    alert('Checklist carregado com sucesso! Nota: As fotos não são restauradas devido ao tamanho dos dados.');
+  };
+
+  // Function to create new checklist
+  const createNewChecklist = () => {
+    clearAllChecks();
+    setLoadedChecklistId(null);
+    setCurrentView('checklist');
+  };
+
   // Função 6: Gerar PDF com todos os dados
   const generatePDF = async () => {
     const allFrames = visualInspections.flatMap(inspection => inspection.frames);
@@ -118,11 +177,54 @@ const ConvertVideoToFrames = () => {
     console.log('Checklist limpo completamente');
   };
 
+  // Show history view
+  if (currentView === 'history') {
+    return (
+      <ChecklistHistory
+        onLoadChecklist={loadChecklistFromHistory}
+        onBack={() => setCurrentView('checklist')}
+      />
+    );
+  }
+
   return (
     <div className="checklist-container">
       <div className="checklist-header">
         <h1 className="checklist-title">Sistema BASELL</h1>
         <p className="checklist-subtitle">Checklist Digital de Inspeção Veicular</p>
+        
+        {/* Header Actions */}
+        <div className="header-actions" style={{ 
+          marginTop: 'var(--spacing-lg)', 
+          display: 'flex', 
+          gap: 'var(--spacing-md)', 
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <button onClick={() => setCurrentView('history')} className="btn btn-outline">
+            📋 Histórico
+          </button>
+          <button onClick={saveCurrentChecklist} className="btn btn-primary">
+            💾 Salvar Checklist
+          </button>
+          <button onClick={createNewChecklist} className="btn btn-secondary">
+            ➕ Novo Checklist
+          </button>
+        </div>
+        
+        {loadedChecklistId && (
+          <div style={{ 
+            marginTop: 'var(--spacing-sm)', 
+            padding: 'var(--spacing-sm)', 
+            backgroundColor: 'rgb(16 185 129 / 0.1)', 
+            borderRadius: 'var(--radius-md)',
+            textAlign: 'center'
+          }}>
+            <span style={{ color: 'var(--color-success)', fontSize: '0.875rem', fontWeight: '500' }}>
+              ✅ Checklist carregado (ID: {loadedChecklistId.slice(-8)})
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="checklist-content">
