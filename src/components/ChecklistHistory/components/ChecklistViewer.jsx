@@ -1,6 +1,22 @@
 import React from 'react';
 
 const ChecklistViewer = ({ checklist, onBack, onLoad }) => {
+  // Add safety check for checklist object
+  if (!checklist) {
+    return (
+      <div className="checklist-viewer">
+        <div className="viewer-header">
+          <button onClick={onBack} className="back-button">
+            ← Voltar
+          </button>
+        </div>
+        <div className="loading-message">
+          Carregando checklist...
+        </div>
+      </div>
+    );
+  }
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('pt-BR');
   };
@@ -47,22 +63,22 @@ const ChecklistViewer = ({ checklist, onBack, onLoad }) => {
         {/* Vehicle Information */}
         <div className="viewer-section">
           <h2 className="section-title">Informações do Veículo</h2>
-          <div className="vehicle-info-grid">
-            <div className="info-item">
-              <label>Placa:</label>
-              <span>{checklist.vehicleInfo.plate || '-'}</span>
-            </div>
-            <div className="info-item">
-              <label>Modelo:</label>
-              <span>{checklist.vehicleInfo.model || '-'}</span>
-            </div>
-            <div className="info-item">
-              <label>Motorista:</label>
-              <span>{checklist.vehicleInfo.driver || '-'}</span>
-            </div>
-            <div className="info-item">
-              <label>Inspetor:</label>
-              <span>{checklist.vehicleInfo.inspector || '-'}</span>
+              <div className="info-item">
+                <span className="label">Placa:</span>
+                <span className="value">{checklist.vehicleInfo?.plate || 'N/A'}</span>
+              </div>
+              <div className="info-item">
+                <span className="label">Modelo:</span>
+                <span className="value">{checklist.vehicleInfo?.model || 'N/A'}</span>
+              </div>
+              <div className="info-item">
+                <span className="label">Motorista:</span>
+                <span className="value">{checklist.vehicleInfo?.driver || 'N/A'}</span>
+              </div>
+              <div className="info-item">
+                <span className="label">Inspetor:</span>
+                <span className="value">{checklist.vehicleInfo?.inspector || 'N/A'}</span>
+              </div>
             </div>
           </div>
         </div>
