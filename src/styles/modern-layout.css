@@ -82,12 +82,10 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ===== LAYOUT CONTAINERS ===== */
-.app-container {
+.history-page {
   min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 2rem;
   background-color: var(--color-gray-50);
   padding: var(--space-4);
 }
@@ -138,11 +136,9 @@ body {
 
 /* ===== STAGE COMPONENTS ===== */
 .stage-header,
-.stage2-header {
+.history-page .history-header {
   display: flex;
-  align-items: center;
   gap: var(--space-4);
-  margin-bottom: var(--space-8);
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--color-gray-200);
 }
@@ -630,17 +626,23 @@ body {
   height: auto;
   display: block;
 }
-
-/* ===== MOBILE-SPECIFIC COMPONENTS ===== */
-.current-inspection-card {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-gray-200);
+  gap: 2rem;
+  margin-bottom: 2rem;
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  margin-bottom: var(--space-6);
-  display: flex;
+.back-button {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
 .inspection-badge-mobile {
@@ -677,333 +679,417 @@ body {
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: var(--space-1);
-}
+  transition: all 0.2s;
 
 .inspection-description-mobile {
   font-size: var(--font-size-sm);
   color: var(--color-gray-500);
   line-height: 1.4;
   margin-bottom: var(--space-2);
-}
-
+  border-color: #3b82f6;
+  color: #3b82f6;
 .inspection-status-mobile {
   font-size: var(--font-size-xs);
-  font-weight: 500;
+/* Selection Actions */
 }
 
 .status-completed-mobile {
   color: var(--color-success);
-}
-
-.status-pending-mobile {
-  color: var(--color-warning);
-}
+  padding: 1rem;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: white;
 
 /* Mobile Tabs */
 .mobile-tabs {
-  display: flex;
-  background-color: var(--color-gray-100);
+  font-weight: 600;
   border-radius: var(--radius-md);
   padding: var(--space-1);
-  margin-bottom: var(--space-6);
-}
-
-.tab-button {
-  flex: 1;
-  display: flex;
+.btn-danger-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.375rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1);
+.btn-danger-small:hover {
   padding: var(--space-3);
-  border: none;
   background: transparent;
   border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: var(--color-gray-500);
-}
-
-.tab-button.active {
-  background-color: var(--color-background);
+/* Content */
+.content-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: var(--color-primary);
   box-shadow: var(--shadow-sm);
-}
-
-.tab-icon {
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
   font-size: var(--font-size-lg);
 }
-
-.tab-text {
-  font-size: var(--font-size-xs);
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
   font-weight: 500;
 }
-
-/* Mobile Video Section */
-.video-section-mobile {
-  margin-bottom: var(--space-6);
-}
-
-.video-container-mobile {
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
   position: relative;
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-color: var(--color-gray-900);
-}
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
 
 .video-element-mobile {
-  width: 100%;
-  height: auto;
-  min-height: 240px;
-  object-fit: cover;
-}
+.empty-state h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
 
 .video-overlay-mobile {
-  position: absolute;
-  top: var(--space-4);
+.empty-state p {
+  color: #64748b;
+  margin-bottom: 2rem;
   left: var(--space-4);
   right: var(--space-4);
-  display: flex;
-  justify-content: space-between;
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
   align-items: flex-start;
 }
-
-.recording-indicator-mobile {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  background-color: rgba(239, 68, 68, 0.9);
-  color: var(--color-background);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+.btn-primary:hover {
+  background: #2563eb;
   font-size: var(--font-size-xs);
   font-weight: 500;
-}
-
+/* Checklist Grid */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
 .recording-dot-mobile {
   width: 8px;
-  height: 8px;
-  background-color: var(--color-background);
+.checklist-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+  position: relative;
   border-radius: 50%;
   animation: pulse 1s infinite;
-}
-
+.checklist-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #cbd5e1;
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 
-.frame-counter-mobile {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: var(--color-background);
-  padding: var(--space-2) var(--space-3);
+.back-button:hover {
+.card-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: #475569;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+.header-content h1 {
+  font-size: 2rem;
+.card-content {
+  space-y: 1rem;
 }
 
-/* Mobile Status Cards */
-.status-cards-mobile {
-  display: grid;
+.vehicle-info {
+  margin-bottom: 1rem;
+.header-actions {
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-}
-
-.status-card-mobile {
+.vehicle-plate {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-4);
-  background-color: var(--color-background);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  text-align: center;
+.vehicle-model {
+  color: #64748b;
+  margin: 0;
 }
 
-.status-icon-mobile {
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--space-2);
-}
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
 
 .status-value-mobile {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--space-1);
-}
-
-.status-label-mobile {
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
-}
-
-/* Mobile Inspection List */
-.inspection-list-mobile {
+.detail-item {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 0.25rem;
+.btn-secondary, .btn-danger {
+  display: inline-flex;
+.detail-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+.detail-value {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+.btn-secondary {
+  background: white;
+.progress-section {
+  margin-bottom: 1rem;
+.btn-secondary:hover {
+  background: #f8fafc;
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
-.inspection-card-mobile {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  transition: all 0.2s ease;
+.progress-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+/* Statistics */
+.stats-section {
+.progress-percentage {
+  font-size: 0.875rem;
+  color: #1e293b;
+  font-weight: 600;
 }
 
-.inspection-card-mobile.current {
+.progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background: #e2e8f0;
+  border-radius: 0.25rem;
+  overflow: hidden;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgb(37 99 235 / 0.1);
-}
-
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  transition: width 0.3s ease;
 .inspection-card-mobile.completed {
   border-color: var(--color-success);
-  background-color: rgb(16 185 129 / 0.02);
-}
-
-.inspection-card-header-mobile {
+.media-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
-}
+.media-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
 
 .inspection-number-badge-mobile {
+.date-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
   height: 32px;
   background-color: var(--color-gray-200);
-  color: var(--color-gray-600);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
+.date-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-weight: 600;
-  flex-shrink: 0;
-}
-
-.inspection-card-mobile.current .inspection-number-badge-mobile {
-  background-color: var(--color-primary);
-  color: var(--color-background);
-}
-
-.inspection-card-mobile.completed .inspection-number-badge-mobile {
-  background-color: var(--color-success);
-  color: var(--color-background);
-}
-
-.inspection-card-content-mobile {
-  flex: 1;
-  min-width: 0;
-}
-
+.search-container {
+  position: relative;
+.date-value {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
 .inspection-card-title-mobile {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--space-1);
-}
-
-.inspection-card-description-mobile {
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
-  line-height: 1.4;
-}
-
-.inspection-card-status-mobile {
-  flex-shrink: 0;
-}
-
-.status-icon-mobile {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.search-icon {
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  transform: translateY(-50%);
+  color: #9ca3af;
+.action-btn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
   font-size: var(--font-size-sm);
-}
-
-.status-icon-mobile.success {
-  background-color: var(--color-success);
-  color: var(--color-background);
-}
-
-.status-icon-mobile.current {
-  background-color: var(--color-warning);
-  color: var(--color-background);
-}
-
-.status-icon-mobile.pending {
-  background-color: var(--color-gray-200);
-  color: var(--color-gray-500);
-}
-
-.inspection-card-stats-mobile {
+  padding: 0.75rem 1rem 0.75rem 3rem;
+.action-btn.view {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+.action-btn.view:hover {
+  background: #e2e8f0;
+  color: #334155;
+  width: 24px;
+  border-color: #3b82f6;
+.action-btn.edit {
+  background: #3b82f6;
+  color: white;
+  border: 1px solid #3b82f6;
+.filter-controls {
   display: flex;
-  gap: var(--space-4);
-}
-
-.stat-mobile {
+.action-btn.edit:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+.action-btn.delete {
+  background: #ef4444;
+  color: white;
+  border: 1px solid #ef4444;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+.action-btn.delete:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Responsive */
+@media (max-width: 768px) {
+  .history-page {
+.confirm-dialog-actions .btn-danger {
+  background: #ef4444;
+  color: white;
+  
+  .checklist-grid {
+.confirm-dialog-actions .btn-danger:hover {
+  background: #dc2626;
+  }
+  
+  .stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+/* Confirm Dialog Styles */
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
 }
 
-.stat-icon-mobile {
-  font-size: var(--font-size-sm);
-}
-
-.stat-value-mobile {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-gray-600);
-}
-
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-
-/* Mobile First (320px+) - Base styles above */
-
+.confirm-dialog {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 /* Small devices (640px+) */
 @media (min-width: 640px) {
-  .app-container {
-    padding: var(--space-6);
+.confirm-dialog-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
   }
-  
-  .checklist-header {
     padding: var(--space-10) var(--space-8);
   }
-  
-  .checklist-content {
-    padding: var(--space-8);
-  }
-  
-  .form-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
+.confirm-dialog-body p {
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+  text-align: center;
   
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-  
+.confirm-dialog-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
   .mobile-tabs {
     display: none;
-  }
-  
-  .tab-content {
-    display: block;
-  }
+.confirm-dialog-actions .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
   
   .current-inspection-card {
-    display: none;
-  }
+.confirm-dialog-actions .btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
 }
 
-/* Medium devices (768px+) */
-@media (min-width: 768px) {
   .checklist-title {
     font-size: var(--font-size-3xl);
   }
@@ -1023,27 +1109,10 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .inspection-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .status-buttons {
-    flex-wrap: nowrap;
-  }
-  
-  .header-actions {
-    flex-wrap: nowrap;
-  }
+.confirm-dialog-actions .btn-secondary:hover {
+  background: #e2e8f0;
 }
 
-/* Large devices (1024px+) */
-@media (min-width: 1024px) {
-  .app-container {
-    padding: var(--space-8);
   }
   
   .checklist-header {
