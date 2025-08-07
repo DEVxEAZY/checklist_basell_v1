@@ -38,6 +38,8 @@ export const useSupabaseChecklistHistory = () => {
   const saveChecklist = async (checklistData, vehicleInfo) => {
     setLoading(true)
     try {
+      console.log('Saving checklist with data:', { checklistData, vehicleInfo })
+      
       // Prepare checklist data
       const checklistRecord = {
         vehicle_plate: vehicleInfo.plate || '',
@@ -56,6 +58,8 @@ export const useSupabaseChecklistHistory = () => {
           inspection.videoData).length || 0
       }
 
+      console.log('Checklist record to insert:', checklistRecord)
+
       // Insert checklist
       const { data: checklist, error: checklistError } = await supabase
         .from('checklists')
@@ -63,7 +67,12 @@ export const useSupabaseChecklistHistory = () => {
         .select()
         .single()
 
-      if (checklistError) throw checklistError
+      if (checklistError) {
+        console.error('Checklist insert error:', checklistError)
+        throw checklistError
+      }
+
+      console.log('Checklist inserted successfully:', checklist)
 
       // Save videos separately
       if (checklistData.visualInspections) {
@@ -72,6 +81,7 @@ export const useSupabaseChecklistHistory = () => {
             try {
               // Convert blob to base64 for storage
               const base64Data = await blobToBase64(inspection.videoData.blob)
+              console.log('Converting video for inspection:', inspection.name)
               
               const videoRecord = {
                 checklist_id: checklist.id,
@@ -83,12 +93,21 @@ export const useSupabaseChecklistHistory = () => {
                 recorded_at: inspection.videoData.recordedAt || new Date().toISOString()
               }
 
+              console.log('Video record to insert:', { 
+                checklist_id: videoRecord.checklist_id,
+                inspection_id: videoRecord.inspection_id,
+                inspection_name: videoRecord.inspection_name,
+                video_size: videoRecord.video_size
+              })
+
               const { error: videoError } = await supabase
                 .from('inspection_videos')
                 .insert([videoRecord])
 
               if (videoError) {
-                console.error('Error saving video for inspection:', inspection.name, videoError)
+                console.error('Video insert error for inspection:', inspection.name, videoError)
+              } else {
+                console.log('Video saved successfully for inspection:', inspection.name)
               }
             } catch (videoError) {
               console.error('Error processing video for inspection:', inspection.name, videoError)
@@ -103,7 +122,20 @@ export const useSupabaseChecklistHistory = () => {
       return checklist.id
     } catch (error) {
       console.error('Error saving checklist:', error)
-      alert('Erro ao salvar checklist: ' + error.message)
+      
+      // More detailed error message
+      let errorMessage = 'Erro ao salvar checklist: '
+      if (error.message) {
+        errorMessage += error.message
+      }
+      if (error.details) {
+        errorMessage += ' - Detalhes: ' + error.details
+      }
+      if (error.hint) {
+        errorMessage += ' - Dica: ' + error.hint
+      }
+      
+      alert(errorMessage)
       throw error
     } finally {
       setLoading(false)
@@ -114,6 +146,8 @@ export const useSupabaseChecklistHistory = () => {
   const updateChecklist = async (id, checklistData, vehicleInfo) => {
     setLoading(true)
     try {
+      console.log('Updating checklist:', id, { checklistData, vehicleInfo })
+      
       // Prepare updated checklist data
       const checklistRecord = {
         updated_at: new Date().toISOString(),
@@ -133,13 +167,20 @@ export const useSupabaseChecklistHistory = () => {
           inspection.videoData).length || 0
       }
 
+      console.log('Checklist record to update:', checklistRecord)
+
       // Update checklist
       const { error: checklistError } = await supabase
         .from('checklists')
         .update(checklistRecord)
         .eq('id', id)
 
-      if (checklistError) throw checklistError
+      if (checklistError) {
+        console.error('Checklist update error:', checklistError)
+        throw checklistError
+      }
+
+      console.log('Checklist updated successfully')
 
       // Delete existing videos
       const { error: deleteError } = await supabase
@@ -187,7 +228,20 @@ export const useSupabaseChecklistHistory = () => {
       await loadChecklists()
     } catch (error) {
       console.error('Error updating checklist:', error)
-      alert('Erro ao atualizar checklist: ' + error.message)
+      
+      // More detailed error message
+      let errorMessage = 'Erro ao atualizar checklist: '
+      if (error.message) {
+        errorMessage += error.message
+      }
+      if (error.details) {
+        errorMessage += ' - Detalhes: ' + error.details
+      }
+      if (error.hint) {
+        errorMessage += ' - Dica: ' + error.hint
+      }
+      
+      alert(errorMessage)
       throw error
     } finally {
       setLoading(false)
@@ -197,6 +251,8 @@ export const useSupabaseChecklistHistory = () => {
   // Get a specific checklist by ID with videos
   const getChecklistById = async (id) => {
     try {
+      console.log('Getting checklist by ID:', id)
+      
       // Get checklist data
       const { data: checklist, error: checklistError } = await supabase
         .from('checklists')
@@ -204,7 +260,12 @@ export const useSupabaseChecklistHistory = () => {
         .eq('id', id)
         .single()
 
-      if (checklistError) throw checklistError
+      if (checklistError) {
+        console.error('Error getting checklist:', checklistError)
+        throw checklistError
+      }
+
+      console.log('Checklist retrieved:', checklist)
 
       // Get videos for this checklist
       const { data: videos, error: videosError } = await supabase
@@ -213,7 +274,9 @@ export const useSupabaseChecklistHistory = () => {
         .eq('checklist_id', id)
 
       if (videosError) {
-        console.error('Error loading videos:', videosError)
+        console.error('Error getting videos:', videosError)
+      } else {
+        console.log('Videos retrieved:', videos?.length || 0, 'videos')
       }
 
       // Reconstruct checklist with videos
