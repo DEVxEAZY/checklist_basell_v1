@@ -42,7 +42,7 @@ export const useChecklistHistory = () => {
       visualInspections: checklistData.visualInspections || [],
       status: calculateStatus(checklistData.basicChecks, checklistData.visualInspections),
       totalFrames: checklistData.visualInspections?.reduce((total, inspection) => 
-        total + (inspection.frames?.length || 0), 0) || 0
+        total + (inspection.frames?.length || 0), 0) || 0,
       totalVideos: checklistData.visualInspections?.filter(inspection => 
         inspection.videoData).length || 0
     };
@@ -68,7 +68,7 @@ export const useChecklistHistory = () => {
             visualInspections: checklistData.visualInspections || [],
             status: calculateStatus(checklistData.basicChecks, checklistData.visualInspections),
             totalFrames: checklistData.visualInspections?.reduce((total, inspection) => 
-              total + (inspection.frames?.length || 0), 0) || 0
+              total + (inspection.frames?.length || 0), 0) || 0,
             totalVideos: checklistData.visualInspections?.filter(inspection => 
               inspection.videoData).length || 0
           }
