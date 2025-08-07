@@ -34,6 +34,7 @@ const InspectionList = ({
                 {inspection.description}
               </div>
               <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)' }}>
+              </div>
               <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--spacing-sm)' }}>
                 <div className="stat-item">
                   <div className="stat-icon info">📸</div>
