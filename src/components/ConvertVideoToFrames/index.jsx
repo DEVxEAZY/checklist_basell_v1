@@ -2,7 +2,7 @@ import React from 'react';
 import ChecklistHistory from '../ChecklistHistory';
 import { generateChecklistWithData } from '../pdfTemplate';
 import { PDF_OPTIONS } from './constants/inspectionData';
-import { useChecklistHistory } from '../../hooks/useChecklistHistory';
+import { useSupabaseChecklistHistory } from '../../hooks/useSupabaseChecklistHistory';
 
 // Hooks
 import { useBasicChecks } from './hooks/useBasicChecks';
@@ -21,7 +21,12 @@ const ConvertVideoToFrames = () => {
   const [loadedChecklistId, setLoadedChecklistId] = React.useState(null);
   
   // History hook
-  const { saveChecklist, updateChecklist, getChecklistById } = useChecklistHistory();
+  const { 
+    saveChecklist, 
+    updateChecklist, 
+    getChecklistById,
+    loading 
+  } = useSupabaseChecklistHistory();
 
   // Hooks
   const {
@@ -79,33 +84,48 @@ const ConvertVideoToFrames = () => {
   );
 
   // Function to save current checklist
-  const saveCurrentChecklist = () => {
+  const saveCurrentChecklist = async () => {
+    if (loading) return;
+    
     const checklistData = {
       basicChecks: basicChecks,
       visualInspections: visualInspections
     };
 
-    if (loadedChecklistId) {
-      // Update existing checklist
-      updateChecklist(loadedChecklistId, checklistData, vehicleInfo);
-      alert('Checklist atualizado com sucesso!');
-    } else {
-      // Save new checklist
-      const newId = saveChecklist(checklistData, vehicleInfo);
-      setLoadedChecklistId(newId);
-      alert('Checklist salvo com sucesso!');
+    try {
+      if (loadedChecklistId) {
+        // Update existing checklist
+        await updateChecklist(loadedChecklistId, checklistData, vehicleInfo);
+        alert('Checklist atualizado com sucesso!');
+      } else {
+        // Save new checklist
+        const newId = await saveChecklist(checklistData, vehicleInfo);
+        setLoadedChecklistId(newId);
+        alert('Checklist salvo com sucesso!');
+      }
+    } catch (error) {
+      console.error('Error saving checklist:', error);
+      alert('Erro ao salvar checklist. Verifique sua conexão.');
     }
   };
 
   // Function to load checklist from history
-  const loadChecklistFromHistory = (checklist) => {
+  const loadChecklistFromHistory = async (checklist) => {
+    try {
+      // Get full checklist data with videos
+      const fullChecklist = await getChecklistById(checklist.id);
+      if (!fullChecklist) {
+        alert('Erro ao carregar checklist');
+        return;
+      }
+      
     // Load vehicle info
-    Object.keys(checklist.vehicleInfo).forEach(key => {
-      updateVehicleInfo(key, checklist.vehicleInfo[key]);
+      Object.keys(fullChecklist.vehicleInfo).forEach(key => {
+        updateVehicleInfo(key, fullChecklist.vehicleInfo[key]);
     });
 
     // Load basic checks
-    checklist.basicChecks.forEach(check => {
+      fullChecklist.basicChecks.forEach(check => {
       if (check.isCompleted) {
         updateBasicCheck(check.id, check.status, check.observation);
       }
@@ -114,12 +134,16 @@ const ConvertVideoToFrames = () => {
       }
     });
 
-    // Load visual inspections (simplified - frames won't be restored)
-    // This is because frames contain large data URLs that would make storage impractical
+      // Load visual inspections with videos
+      // Note: Frames are not restored to avoid large data storage
     
-    setLoadedChecklistId(checklist.id);
+      setLoadedChecklistId(fullChecklist.id);
     setCurrentView('checklist');
-    alert('Checklist carregado com sucesso! Nota: As fotos não são restauradas devido ao tamanho dos dados.');
+      alert('Checklist carregado com sucesso! Nota: As fotos individuais não são restauradas, mas os vídeos estão disponíveis.');
+    } catch (error) {
+      console.error('Error loading checklist:', error);
+      alert('Erro ao carregar checklist');
+    }
   };
 
   // Function to create new checklist
@@ -207,8 +231,12 @@ const ConvertVideoToFrames = () => {
           <button onClick={() => setCurrentView('history')} className="btn btn-outline">
             📋 Histórico
           </button>
-          <button onClick={saveCurrentChecklist} className="btn btn-primary">
-            💾 Salvar Checklist
+          <button 
+            onClick={saveCurrentChecklist} 
+            disabled={loading}
+            className="btn btn-primary"
+          >
+            {loading ? '⏳ Salvando...' : '💾 Salvar Checklist'}
           </button>
           <button onClick={createNewChecklist} className="btn btn-secondary">
             ➕ Novo Checklist

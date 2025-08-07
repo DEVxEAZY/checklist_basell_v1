@@ -2,6 +2,7 @@ import React from 'react';
 
 const HistoryTable = ({
   checklists,
+  loading,
   selectedChecklists,
   onSelectChecklist,
   onSelectAll,
@@ -25,6 +26,16 @@ const HistoryTable = ({
   };
 
   if (checklists.length === 0) {
+    if (loading) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">⏳</div>
+          <h3>Carregando checklists...</h3>
+          <p>Aguarde enquanto carregamos os dados do Supabase.</p>
+        </div>
+      );
+    }
+    
     return (
       <div className="empty-state">
         <div className="empty-icon">📋</div>
@@ -69,16 +80,16 @@ const HistoryTable = ({
                 />
               </td>
               <td className="plate-cell">
-                {checklist.vehicleInfo.plate || '-'}
+                {checklist.vehicle_plate || '-'}
               </td>
               <td className="model-cell">
-                {checklist.vehicleInfo.model || '-'}
+                {checklist.vehicle_model || '-'}
               </td>
-              <td>{checklist.vehicleInfo.driver || '-'}</td>
-              <td>{checklist.vehicleInfo.inspector || '-'}</td>
+              <td>{checklist.driver_name || '-'}</td>
+              <td>{checklist.inspector_name || '-'}</td>
               <td>{getStatusBadge(checklist.status)}</td>
               <td className="photos-cell">
-                <span className="photo-count">{checklist.totalFrames}</span>
+                <span className="photo-count">{checklist.total_frames || 0}</span>
               </td>
               <td className="date-cell">
                 {formatDate(checklist.createdAt)}

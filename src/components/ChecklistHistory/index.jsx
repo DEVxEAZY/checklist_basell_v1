@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useChecklistHistory } from '../../hooks/useChecklistHistory';
+import { useSupabaseChecklistHistory } from '../../hooks/useSupabaseChecklistHistory';
 import HistoryHeader from './components/HistoryHeader';
 import HistoryFilters from './components/HistoryFilters';
 import HistoryTable from './components/HistoryTable';
@@ -10,6 +10,7 @@ import ConfirmDialog from './components/ConfirmDialog';
 const ChecklistHistory = ({ onLoadChecklist, onBack }) => {
   const {
     checklists,
+    loading,
     searchTerm,
     setSearchTerm,
     filterStatus,
