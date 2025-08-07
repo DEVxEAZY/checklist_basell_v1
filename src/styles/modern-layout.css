@@ -1764,6 +1764,252 @@ body {
 
 /* ===== MOBILE-FIRST STAGE 2 REDESIGN ===== */
 
+/* ===== STAGE 1 IMPROVEMENTS ===== */
+
+/* Container principal da Etapa 1 */
+.stage1-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Lista de verificações melhorada */
+.checks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Check items otimizados para mobile */
+.check-item {
+  background-color: var(--color-white);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all 0.2s ease;
+}
+
+.check-item:hover {
+  border-color: var(--color-gray-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.check-item.completed {
+  border-color: var(--color-success);
+  background-color: rgb(16 185 129 / 0.05);
+}
+
+.check-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.check-item-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.check-item-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.check-item.completed .check-item-number {
+  background-color: var(--color-success);
+}
+
+.check-item-description {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-lg);
+}
+
+.check-item-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.check-item-status.ok {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.check-item-status.not_ok {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.check-item-status.na {
+  background-color: var(--color-warning);
+  color: var(--color-white);
+}
+
+/* Status buttons melhorados */
+.status-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.status-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  background-color: var(--color-white);
+  min-height: 48px;
+}
+
+.status-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.status-btn.success {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.status-btn.success:hover {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.status-btn.danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.status-btn.danger:hover {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.status-btn.warning {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.status-btn.warning:hover {
+  background-color: var(--color-warning);
+  color: var(--color-white);
+}
+
+/* Status display melhorado */
+.status-display {
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-xs);
+}
+
+.observation-text {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Observation input melhorado */
+.observation-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  resize: vertical;
+  min-height: 80px;
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.observation-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.observation-input::placeholder {
+  color: var(--color-gray-400);
+}
+
+/* Responsividade para Stage 1 */
+@media (max-width: 768px) {
+  .stage1-container {
+    max-width: 100%;
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .status-buttons {
+    flex-direction: column;
+  }
+  
+  .status-btn {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .check-item {
+    padding: var(--spacing-md);
+  }
+  
+  .check-item-title {
+    font-size: 1rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Container principal da Etapa 2 */
 .stage2-container {
   display: flex;
