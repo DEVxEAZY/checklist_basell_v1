@@ -1,7 +1,7 @@
 import React from 'react';
 
 const HistoryStats = ({ statistics }) => {
-  const { total, completed, inProgress, drafts, totalFrames } = statistics;
+  const { total, completed, inProgress, drafts, totalFrames, totalVideos } = statistics;
 
   return (
     <div className="history-stats">
@@ -42,6 +42,14 @@ const HistoryStats = ({ statistics }) => {
         <div className="stat-content">
           <div className="stat-value">{totalFrames}</div>
           <div className="stat-label">Fotos</div>
+        </div>
+      </div>
+      
+      <div className="stat-card">
+        <div className="stat-icon videos">🎥</div>
+        <div className="stat-content">
+          <div className="stat-value">{totalVideos}</div>
+          <div className="stat-label">Vídeos</div>
         </div>
       </div>
     </div>

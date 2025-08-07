@@ -34,11 +34,19 @@ const InspectionList = ({
                 {inspection.description}
               </div>
               <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)' }}>
+              <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--spacing-sm)' }}>
                 <div className="stat-item">
                   <div className="stat-icon info">📸</div>
                   <div className="stat-content">
                     <p className="stat-label">Fotos</p>
                     <p className="stat-value">{inspection.frames.length}</p>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon info">🎥</div>
+                  <div className="stat-content">
+                    <p className="stat-label">Vídeo</p>
+                    <p className="stat-value">{inspection.videoData ? 'Sim' : 'Não'}</p>
                   </div>
                 </div>
                 <div className="stat-item">

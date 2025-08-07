@@ -20,11 +20,22 @@ export const useVisualInspections = () => {
   };
 
   // Função para marcar inspeção como completa com status
-  const markInspectionAsComplete = (inspectionId, status = 'ok') => {
+  const markInspectionAsComplete = (inspectionId, status = 'ok', videoBlob = null) => {
     setVisualInspections(prev => {
       const updated = prev.map(inspection => 
         inspection.id === inspectionId 
-          ? { ...inspection, isCompleted: true, status: status }
+          ? { 
+              ...inspection, 
+              isCompleted: true, 
+              status: status,
+              videoData: videoBlob ? {
+                dataUrl: URL.createObjectURL(videoBlob),
+                blob: videoBlob,
+                size: videoBlob.size,
+                type: videoBlob.type,
+                recordedAt: new Date().toISOString()
+              } : null
+            }
           : inspection
       );
       console.log('Inspeção marcada como completa:', inspectionId, 'Status:', status, updated);
@@ -36,7 +47,7 @@ export const useVisualInspections = () => {
   const resetCurrentInspection = () => {
     setVisualInspections(prev => prev.map(inspection => 
       inspection.id === currentInspection 
-        ? { ...inspection, frames: [], isCompleted: false }
+        ? { ...inspection, frames: [], isCompleted: false, videoData: null }
         : inspection
     ));
   };

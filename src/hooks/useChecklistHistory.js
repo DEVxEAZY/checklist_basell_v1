@@ -43,6 +43,8 @@ export const useChecklistHistory = () => {
       status: calculateStatus(checklistData.basicChecks, checklistData.visualInspections),
       totalFrames: checklistData.visualInspections?.reduce((total, inspection) => 
         total + (inspection.frames?.length || 0), 0) || 0
+      totalVideos: checklistData.visualInspections?.filter(inspection => 
+        inspection.videoData).length || 0
     };
 
     setChecklists(prev => [newChecklist, ...prev]);
@@ -67,6 +69,8 @@ export const useChecklistHistory = () => {
             status: calculateStatus(checklistData.basicChecks, checklistData.visualInspections),
             totalFrames: checklistData.visualInspections?.reduce((total, inspection) => 
               total + (inspection.frames?.length || 0), 0) || 0
+            totalVideos: checklistData.visualInspections?.filter(inspection => 
+              inspection.videoData).length || 0
           }
         : checklist
     ));
@@ -160,13 +164,15 @@ export const useChecklistHistory = () => {
     const inProgress = checklists.filter(c => c.status === 'in_progress').length;
     const drafts = checklists.filter(c => c.status === 'draft').length;
     const totalFrames = checklists.reduce((sum, c) => sum + c.totalFrames, 0);
+    const totalVideos = checklists.reduce((sum, c) => sum + (c.totalVideos || 0), 0);
 
     return {
       total,
       completed,
       inProgress,
       drafts,
-      totalFrames
+      totalFrames,
+      totalVideos
     };
   };
 

@@ -199,7 +199,7 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   const handleStatusConfirm = (status) => {
     setShowStatusPopup(false);
     // Marcar inspeção como completa com o status escolhido
-    markInspectionAsComplete(null, status);
+    markInspectionAsComplete(null, status, recordedVideoBlob);
     console.log('Status da inspeção confirmado:', status);
     // Mostrar popup de regravação apenas se houve captura ativa
     if (hasActiveCapture || captureTimeRef.current > 0) {

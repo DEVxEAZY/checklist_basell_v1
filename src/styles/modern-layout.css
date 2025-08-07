@@ -807,6 +807,11 @@ body {
   color: #8b5cf6;
 }
 
+.stat-icon.videos {
+  background-color: rgb(239 68 68 / 0.1);
+  color: var(--color-danger);
+}
+
 .stat-content {
   flex: 1;
 }
@@ -1225,6 +1230,40 @@ body {
 
 .inspection-frames {
   margin-top: var(--spacing-lg);
+}
+
+.inspection-video {
+  margin-top: var(--spacing-lg);
+}
+
+.inspection-video h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.video-container {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.inspection-video-player {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+}
+
+.video-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.video-info span {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
 }
 
 .inspection-frames h4 {

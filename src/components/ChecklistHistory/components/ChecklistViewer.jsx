@@ -111,6 +111,31 @@ const ChecklistViewer = ({ checklist, onBack, onLoad }) => {
                 </div>
                 <div className="inspection-description">{inspection.description}</div>
                 
+                {/* Vídeo da Inspeção */}
+                {inspection.videoData && (
+                  <div className="inspection-video">
+                    <h4>Vídeo da Inspeção</h4>
+                    <div className="video-container">
+                      <video 
+                        src={inspection.videoData.dataUrl}
+                        controls
+                        className="inspection-video-player"
+                        style={{
+                          width: '100%',
+                          maxWidth: '500px',
+                          height: 'auto',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid var(--color-gray-200)'
+                        }}
+                      />
+                      <div className="video-info">
+                        <span>Tamanho: {(inspection.videoData.size / 1024 / 1024).toFixed(2)} MB</span>
+                        <span>Gravado em: {new Date(inspection.videoData.recordedAt).toLocaleString('pt-BR')}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {inspection.frames && inspection.frames.length > 0 && (
                   <div className="inspection-frames">
                     <h4>Fotos Capturadas ({inspection.frames.length})</h4>
