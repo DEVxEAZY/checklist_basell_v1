@@ -6,18 +6,30 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   const [showRerecordPopup, setShowRerecordPopup] = useState(false);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
   const [hasActiveCapture, setHasActiveCapture] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedVideoBlob, setRecordedVideoBlob] = useState(null);
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const intervalRef = useRef(null);
   const captureTimeRef = useRef(0);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
 
   // Função 1: Iniciar Captura de Vídeo
   const startCapture = async () => {
     try {
+      // Detectar se é dispositivo móvel
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       // Solicitar acesso à câmera
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720 },
+        video: { 
+          width: 1280, 
+          height: 720,
+          // Usar câmera traseira em dispositivos móveis
+          facingMode: isMobile ? 'environment' : 'user'
+        },
         audio: false
       });
       
@@ -36,6 +48,9 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       
+      // Iniciar gravação de vídeo
+      startVideoRecording(mediaStream);
+      
       // Iniciar captura automática a cada 3 segundos (fixo)
       startAutoCapture();
       setHasActiveCapture(true);
@@ -46,6 +61,46 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
     }
   };
 
+  // Função para iniciar gravação de vídeo
+  const startVideoRecording = (stream) => {
+    try {
+      recordedChunksRef.current = [];
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm;codecs=vp9' // Formato compatível
+      });
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, {
+          type: 'video/webm'
+        });
+        setRecordedVideoBlob(blob);
+        setIsRecording(false);
+      };
+      
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+      setIsRecording(true);
+      
+      console.log('Gravação de vídeo iniciada');
+    } catch (error) {
+      console.error('Erro ao iniciar gravação de vídeo:', error);
+    }
+  };
+
+  // Função para parar gravação de vídeo
+  const stopVideoRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      console.log('Gravação de vídeo finalizada');
+    }
+  };
   // Função 2: Captura Automática de Frames (fixo 3 segundos)
   const startAutoCapture = () => {
     captureTimeRef.current = 0;
@@ -81,6 +136,9 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
 
   // Função 3: Parar Captura
   const stopCapture = () => {
+    // Parar gravação de vídeo
+    stopVideoRecording();
+    
     // Parar interval de captura
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -108,9 +166,22 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
     }
   };
 
+  // Função para baixar vídeo gravado
+  const downloadRecordedVideo = () => {
+    if (recordedVideoBlob) {
+      const url = URL.createObjectURL(recordedVideoBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `inspecao_video_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.webm`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  };
   // Função para lidar com confirmação de regravação
   const handleRerecordConfirm = () => {
     setShowRerecordPopup(false);
+    // Limpar vídeo gravado anterior
+    setRecordedVideoBlob(null);
     // Resetar a inspeção atual para permitir nova gravação
     resetCurrentInspection();
     console.log('Usuário escolheu regravar - inspeção resetada');
@@ -142,6 +213,8 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Função para lidar com cancelamento de status da inspeção
   const handleStatusCancel = () => {
     setShowStatusPopup(false);
+    // Limpar vídeo gravado
+    setRecordedVideoBlob(null);
     // Resetar a inspeção atual para permitir nova gravação
     resetCurrentInspection();
     console.log('Status da inspeção cancelado - inspeção resetada');
@@ -151,18 +224,23 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   useEffect(() => {
     return () => {
       stopCapture();
+      stopVideoRecording();
       setShowRerecordPopup(false);
       setShowStatusPopup(false);
       setHasActiveCapture(false);
+      setRecordedVideoBlob(null);
     };
   }, []);
 
   return {
     isCapturing,
+    isRecording,
+    recordedVideoBlob,
     videoRef,
     canvasRef,
     startCapture,
     stopCapture,
+    downloadRecordedVideo,
     showRerecordPopup,
     showStatusPopup,
     handleRerecordConfirm,

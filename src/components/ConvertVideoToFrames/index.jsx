@@ -58,10 +58,13 @@ const ConvertVideoToFrames = () => {
 
   const {
     isCapturing,
+    isRecording,
+    recordedVideoBlob,
     videoRef,
     canvasRef,
     startCapture,
     stopCapture,
+    downloadRecordedVideo,
     showRerecordPopup,
     showStatusPopup,
     handleRerecordConfirm,
@@ -251,10 +254,13 @@ const ConvertVideoToFrames = () => {
             completedVisualInspections={completedVisualInspections}
             startCapture={startCapture}
             stopCapture={stopCapture}
+            downloadRecordedVideo={downloadRecordedVideo}
             generatePDF={generatePDF}
             videoRef={videoRef}
             canvasRef={canvasRef}
             isCapturing={isCapturing}
+            isRecording={isRecording}
+            recordedVideoBlob={recordedVideoBlob}
           />
         )}
 

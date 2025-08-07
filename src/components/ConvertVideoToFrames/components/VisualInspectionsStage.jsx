@@ -12,10 +12,13 @@ const VisualInspectionsStage = ({
   completedVisualInspections,
   startCapture,
   stopCapture,
+  downloadRecordedVideo,
   generatePDF,
   videoRef,
   canvasRef,
-  isCapturing
+  isCapturing,
+  isRecording,
+  recordedVideoBlob
 }) => {
   return (
     <div className="fade-in-up">
@@ -51,9 +54,12 @@ const VisualInspectionsStage = ({
       {/* Controles de Vídeo */}
       <VideoControls
         isCapturing={isCapturing}
+        isRecording={isRecording}
+        recordedVideoBlob={recordedVideoBlob}
         currentInspectionData={currentInspectionData}
         startCapture={startCapture}
         stopCapture={stopCapture}
+        downloadRecordedVideo={downloadRecordedVideo}
         currentInspection={currentInspection}
         generatePDF={generatePDF}
         totalFrames={totalFrames}
