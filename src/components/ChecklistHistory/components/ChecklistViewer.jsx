@@ -79,8 +79,6 @@ const ChecklistViewer = ({ checklist, onBack, onLoad }) => {
                 <span className="label">Inspetor:</span>
                 <span className="value">{checklist.vehicleInfo?.inspector || 'N/A'}</span>
               </div>
-            </div>
-          </div>
         </div>
 
         {/* Basic Checks */}
