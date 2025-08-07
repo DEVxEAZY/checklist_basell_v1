@@ -1068,7 +1068,14 @@ body {
   margin: 0 0 2rem 0;
   text-align: center;
   
-  .stats-grid {
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
 .confirm-dialog-actions {
   display: flex;
   gap: 1rem;
