@@ -32,9 +32,20 @@ supabase.from('checklists').select('count', { count: 'exact', head: true })
 // Helper function to convert blob to base64
 export const blobToBase64 = (blob) => {
   return new Promise((resolve, reject) => {
+    console.log('Converting blob to base64:', {
+      size: blob.size,
+      type: blob.type
+    })
+    
     const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result)
-    reader.onerror = reject
+    reader.onloadend = () => {
+      console.log('Base64 conversion completed, result length:', reader.result?.length || 0)
+      resolve(reader.result)
+    }
+    reader.onerror = (error) => {
+      console.error('Base64 conversion error:', error)
+      reject(error)
+    }
     reader.readAsDataURL(blob)
   })
 }

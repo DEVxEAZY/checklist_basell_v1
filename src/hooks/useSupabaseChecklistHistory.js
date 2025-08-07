@@ -38,7 +38,22 @@ export const useSupabaseChecklistHistory = () => {
   const saveChecklist = async (checklistData, vehicleInfo) => {
     setLoading(true)
     try {
-      console.log('Saving checklist with data:', { checklistData, vehicleInfo })
+      console.log('=== SAVING CHECKLIST ===')
+      console.log('Vehicle info:', vehicleInfo)
+      console.log('Basic checks count:', checklistData.basicChecks?.length || 0)
+      console.log('Visual inspections count:', checklistData.visualInspections?.length || 0)
+      
+      // Log video data details
+      if (checklistData.visualInspections) {
+        checklistData.visualInspections.forEach((inspection, index) => {
+          console.log(`Inspection ${index + 1} (${inspection.name}):`, {
+            hasVideoData: !!inspection.videoData,
+            hasBlob: !!(inspection.videoData?.blob),
+            videoSize: inspection.videoData?.size || 0,
+            videoType: inspection.videoData?.type || 'N/A'
+          })
+        })
+      }
       
       // Prepare checklist data
       const checklistRecord = {
@@ -76,12 +91,17 @@ export const useSupabaseChecklistHistory = () => {
 
       // Save videos separately
       if (checklistData.visualInspections) {
+        console.log('=== SAVING VIDEOS ===')
         for (const inspection of checklistData.visualInspections) {
           if (inspection.videoData && inspection.videoData.blob) {
             try {
+              console.log(`Processing video for: ${inspection.name}`)
+              console.log('Video blob size:', inspection.videoData.blob.size)
+              console.log('Video blob type:', inspection.videoData.blob.type)
+              
               // Convert blob to base64 for storage
               const base64Data = await blobToBase64(inspection.videoData.blob)
-              console.log('Converting video for inspection:', inspection.name)
+              console.log('Base64 conversion successful, length:', base64Data.length)
               
               const videoRecord = {
                 checklist_id: checklist.id,
@@ -93,11 +113,13 @@ export const useSupabaseChecklistHistory = () => {
                 recorded_at: inspection.videoData.recordedAt || new Date().toISOString()
               }
 
-              console.log('Video record to insert:', { 
+              console.log('Inserting video record:', { 
                 checklist_id: videoRecord.checklist_id,
                 inspection_id: videoRecord.inspection_id,
                 inspection_name: videoRecord.inspection_name,
-                video_size: videoRecord.video_size
+                video_size: videoRecord.video_size,
+                video_type: videoRecord.video_type,
+                base64_length: base64Data.length
               })
 
               const { error: videoError } = await supabase
@@ -106,14 +128,27 @@ export const useSupabaseChecklistHistory = () => {
 
               if (videoError) {
                 console.error('Video insert error for inspection:', inspection.name, videoError)
+                console.error('Full error details:', {
+                  message: videoError.message,
+                  details: videoError.details,
+                  hint: videoError.hint,
+                  code: videoError.code
+                })
               } else {
                 console.log('Video saved successfully for inspection:', inspection.name)
               }
             } catch (videoError) {
               console.error('Error processing video for inspection:', inspection.name, videoError)
+              console.error('Video processing error stack:', videoError.stack)
             }
+          } else {
+            console.log(`No video data for inspection: ${inspection.name}`, {
+              hasVideoData: !!inspection.videoData,
+              hasBlob: !!(inspection.videoData?.blob)
+            })
           }
         }
+        console.log('=== FINISHED SAVING VIDEOS ===')
       }
 
       // Reload checklists

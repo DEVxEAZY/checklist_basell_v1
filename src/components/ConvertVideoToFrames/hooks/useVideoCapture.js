@@ -198,6 +198,17 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Função para lidar com confirmação de status da inspeção
   const handleStatusConfirm = (status) => {
     setShowStatusPopup(false);
+    
+    console.log('=== STATUS CONFIRMATION ===')
+    console.log('Status selected:', status)
+    console.log('Has recorded video blob:', !!recordedVideoBlob)
+    if (recordedVideoBlob) {
+      console.log('Video blob details:', {
+        size: recordedVideoBlob.size,
+        type: recordedVideoBlob.type
+      })
+    }
+    
     // Marcar inspeção como completa com o status escolhido
     markInspectionAsComplete(null, status, recordedVideoBlob);
     console.log('Status da inspeção confirmado:', status);
