@@ -52,11 +52,37 @@ export const blobToBase64 = (blob) => {
 
 // Helper function to convert base64 to blob
 export const base64ToBlob = (base64, type = 'video/webm') => {
-  const byteCharacters = atob(base64.split(',')[1])
-  const byteNumbers = new Array(byteCharacters.length)
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i)
+  // Validate input
+  if (!base64 || typeof base64 !== 'string') {
+    console.warn('Invalid base64 input:', base64)
+    return new Blob([], { type })
   }
-  const byteArray = new Uint8Array(byteNumbers)
-  return new Blob([byteArray], { type })
+
+  // Check if it has the expected data URL prefix
+  if (!base64.includes(',')) {
+    console.warn('Base64 string missing data URL prefix:', base64.substring(0, 50) + '...')
+    return new Blob([], { type })
+  }
+
+  try {
+    const base64Data = base64.split(',')[1]
+    
+    // Additional validation for base64 data
+    if (!base64Data || base64Data.length === 0) {
+      console.warn('Empty base64 data after splitting')
+      return new Blob([], { type })
+    }
+
+    const byteCharacters = atob(base64Data)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    return new Blob([byteArray], { type })
+  } catch (error) {
+    console.error('Failed to decode base64 string:', error)
+    console.warn('Problematic base64 string:', base64.substring(0, 100) + '...')
+    return new Blob([], { type })
+  }
 }
