@@ -18,15 +18,18 @@ const BasicChecksStage = ({
         <div className="stage-number">1</div>
         <div className="stage-info">
           <h2>Verificações Básicas</h2>
-          <p>Verificações rápidas com respostas categóricas. Todas as 9 verificações devem ser completadas antes de prosseguir.</p>
+          <p>Complete todas as 9 verificações básicas para prosseguir</p>
         </div>
       </div>
       
       {/* Informações do Veículo */}
-      <div className="info-card vehicle-info-card">
-        <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', fontWeight: '600' }}>
-          🚛 Informações do Veículo
-        </h3>
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">
+            <span>🚛</span>
+            Informações do Veículo
+          </h3>
+        </div>
         <div className="form-grid">
           <div className="form-group">
             <label className="form-label">Placa:</label>
@@ -75,12 +78,12 @@ const BasicChecksStage = ({
       </div>
       
       {/* Status da Etapa 1 */}
-      <div className="info-card status-card">
+      <div className="card">
         <StatusPanel
-          title="📋 Status das Verificações Básicas"
+          title="Status das Verificações"
           completedCount={completedBasicChecks}
           totalCount={9}
-          status={areBasicChecksComplete() ? '✅ Completa' : '⏳ Pendente'}
+          status={areBasicChecksComplete() ? 'Completa' : 'Pendente'}
         />
       </div>
 
@@ -88,7 +91,7 @@ const BasicChecksStage = ({
       {(() => {
         const stats = getStatusStats();
         return (
-          <div className="info-card stats-card">
+          <div className="card">
             <div className="stats-grid">
               <div className="stat-item">
                 <div className="stat-icon success">✅</div>
@@ -179,7 +182,7 @@ const BasicChecksStage = ({
             )}
 
             {!check.isCompleted && (
-              <div style={{ marginTop: '1rem' }}>
+              <div style={{ marginTop: 'var(--spacing-md)' }}>
                 <input
                   type="text" 
                   placeholder="Adicionar observação (opcional)"
@@ -202,7 +205,7 @@ const BasicChecksStage = ({
           disabled={!areBasicChecksComplete()}
           className={`action-btn ${areBasicChecksComplete() ? 'primary' : 'secondary'}`}
         >
-          {areBasicChecksComplete() ? 'Próxima Etapa →' : 'Complete todas as verificações'}
+          {areBasicChecksComplete() ? 'Próxima Etapa' : 'Complete todas as verificações'}
         </button>
       </div>
     </div>

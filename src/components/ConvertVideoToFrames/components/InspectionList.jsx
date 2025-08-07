@@ -5,10 +5,13 @@ const InspectionList = ({
   currentInspection
 }) => {
   return (
-    <div className="info-card">
-      <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', fontWeight: '600' }}>
-        📋 Lista de Inspeções
-      </h3>
+    <div className="card">
+      <div className="card-header">
+        <h3 className="card-title">
+          <span>📋</span>
+          Lista de Inspeções
+        </h3>
+      </div>
       <div className="inspection-grid">
         {visualInspections.map((inspection) => {
           console.log(`Renderizando inspeção ${inspection.id}:`, inspection);
@@ -19,27 +22,27 @@ const InspectionList = ({
                 inspection.id === currentInspection ? 'current' : ''
               } ${inspection.isCompleted ? 'completed' : ''}`}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>
+              <div className="inspection-item-header">
+                <h4 className="inspection-item-title">
                   {inspection.name}
                 </h4>
                 {inspection.isCompleted && (
-                  <span style={{ color: '#22c55e', fontSize: '1.5rem' }}>✓</span>
+                  <div className="inspection-item-status success">✓</div>
                 )}
               </div>
-              <div style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1rem', lineHeight: '1.5' }}>
+              <div className="inspection-item-description">
                 {inspection.description}
               </div>
-              <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-                <div className="stat-item" style={{ padding: '0.5rem' }}>
-                  <div className="stat-icon info" style={{ width: '32px', height: '32px', fontSize: '1rem' }}>📸</div>
+              <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)' }}>
+                <div className="stat-item">
+                  <div className="stat-icon info">📸</div>
                   <div className="stat-content">
                     <p className="stat-label">Fotos</p>
-                    <p className="stat-value" style={{ fontSize: '1rem' }}>{inspection.frames.length}</p>
+                    <p className="stat-value">{inspection.frames.length}</p>
                   </div>
                 </div>
-                <div className="stat-item" style={{ padding: '0.5rem' }}>
-                  <div className="stat-icon success" style={{ width: '32px', height: '32px', fontSize: '1rem' }}>
+                <div className="stat-item">
+                  <div className={`stat-icon ${inspection.isCompleted ? 'success' : 'info'}`}>
                     {inspection.isCompleted 
                       ? (inspection.status === 'ok' ? '✅' : 
                          inspection.status === 'not_ok' ? '❌' : 
@@ -48,7 +51,7 @@ const InspectionList = ({
                   </div>
                   <div className="stat-content">
                     <p className="stat-label">Status</p>
-                    <p className="stat-value" style={{ fontSize: '0.85rem' }}>
+                    <p className="stat-value">
                       {inspection.isCompleted 
                         ? (inspection.status === 'ok' ? 'Conforme' : 
                            inspection.status === 'not_ok' ? 'Não conforme' : 

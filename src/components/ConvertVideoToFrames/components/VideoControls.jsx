@@ -17,18 +17,16 @@ const VideoControls = ({
         <button
           onClick={startCapture}
           disabled={isCapturing || currentInspectionData?.isCompleted}
-          className={`action-btn ${
-            isCapturing || currentInspectionData?.isCompleted ? 'secondary' : 'success'
-          }`}
+          className={`action-btn ${isCapturing || currentInspectionData?.isCompleted ? 'secondary' : 'success'}`}
         >
-          {isCapturing ? '📹 Documentando...' : `▶️ Iniciar ${currentInspectionData?.name}`}
+          {isCapturing ? 'Documentando...' : `Iniciar ${currentInspectionData?.name}`}
         </button>
         <button
           onClick={stopCapture}
           disabled={!isCapturing}
           className={`action-btn ${!isCapturing ? 'secondary' : 'danger'}`}
         >
-          ⏹️ Finalizar Inspeção
+          Finalizar Inspeção
         </button>
         
         {/* Mostrar botão de gerar PDF apenas quando todas as inspeções estiverem completas */}
@@ -38,7 +36,7 @@ const VideoControls = ({
             disabled={totalFrames === 0}
             className={`action-btn ${totalFrames === 0 ? 'secondary' : 'primary'}`}
           >
-            📄 Gerar PDF ({totalFrames} fotos)
+            Gerar Relatório ({totalFrames} fotos)
           </button>
         )}
       </div>

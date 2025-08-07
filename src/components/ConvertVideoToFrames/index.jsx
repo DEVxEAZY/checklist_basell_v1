@@ -125,53 +125,43 @@ const ConvertVideoToFrames = () => {
         <p className="checklist-subtitle">Checklist Digital de Inspeção Veicular</p>
       </div>
 
-      {/* Renderizar conteúdo baseado na etapa atual */}
-      {currentStage === 1 ? (
-        <BasicChecksStage
-          basicChecks={basicChecks}
-          updateBasicCheck={updateBasicCheck}
-          updateBasicCheckObservation={updateBasicCheckObservation}
-          areBasicChecksComplete={areBasicChecksComplete}
-          getStatusStats={getStatusStats}
-          completedBasicChecks={completedBasicChecks}
-          nextStage={nextStage}
-          vehicleInfo={vehicleInfo}
-          updateVehicleInfo={updateVehicleInfo}
-        />
-      ) : (
-        <VisualInspectionsStage
-          currentStage={currentStage}
-          visualInspections={visualInspections}
-          currentInspection={currentInspection}
-          currentInspectionData={currentInspectionData}
-          totalFrames={totalFrames}
-          completedVisualInspections={completedVisualInspections}
-          startCapture={startCapture}
-          stopCapture={stopCapture}
-          generatePDF={generatePDF}
-          videoRef={videoRef}
-          canvasRef={canvasRef}
-          isCapturing={isCapturing}
-        />
-      )}
+      <div className="checklist-content">
+        {/* Renderizar conteúdo baseado na etapa atual */}
+        {currentStage === 1 ? (
+          <BasicChecksStage
+            basicChecks={basicChecks}
+            updateBasicCheck={updateBasicCheck}
+            updateBasicCheckObservation={updateBasicCheckObservation}
+            areBasicChecksComplete={areBasicChecksComplete}
+            getStatusStats={getStatusStats}
+            completedBasicChecks={completedBasicChecks}
+            nextStage={nextStage}
+            vehicleInfo={vehicleInfo}
+            updateVehicleInfo={updateVehicleInfo}
+          />
+        ) : (
+          <VisualInspectionsStage
+            currentStage={currentStage}
+            visualInspections={visualInspections}
+            currentInspection={currentInspection}
+            currentInspectionData={currentInspectionData}
+            totalFrames={totalFrames}
+            completedVisualInspections={completedVisualInspections}
+            startCapture={startCapture}
+            stopCapture={stopCapture}
+            generatePDF={generatePDF}
+            videoRef={videoRef}
+            canvasRef={canvasRef}
+            isCapturing={isCapturing}
+          />
+        )}
 
-      {/* Botão Limpar Tudo */}
-      <div className="action-buttons">
-        <button onClick={clearAllChecks} className="action-btn secondary">
-          🗑️ Limpar Checklist Completo
-        </button>
-        <button 
-          onClick={() => {
-            console.log('=== DEBUG INSPEÇÕES VISUAIS ===');
-            console.log('Estado atual das inspeções visuais:', visualInspections);
-            console.log('Inspeção atual:', currentInspection);
-            console.log('Etapa atual:', currentStage);
-            alert('Verifique o console para debug das inspeções visuais');
-          }}
-          className="action-btn danger"
-        >
-          🐛 Debug Inspeções Visuais
-        </button>
+        {/* Botão Limpar Tudo */}
+        <div className="action-buttons">
+          <button onClick={clearAllChecks} className="action-btn secondary">
+            Limpar Checklist
+          </button>
+        </div>
       </div>
 
       {/* Popup de Confirmação de Regravação */}

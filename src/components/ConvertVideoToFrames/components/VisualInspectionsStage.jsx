@@ -23,14 +23,14 @@ const VisualInspectionsStage = ({
         <div className="stage-number">{currentStage}</div>
         <div className="stage-info">
           <h2>Inspeções Visuais</h2>
-          <p>Inspeções visuais com documentação fotográfica. Captura automática a cada 3 segundos.</p>
+          <p>Documentação fotográfica com captura automática</p>
         </div>
       </div>
       
       {/* Status das Inspeções Visuais */}
-      <div className="info-card status-card">
+      <div className="card">
         <StatusPanel
-          title="📸 Status das Inspeções Visuais"
+          title="Status das Inspeções"
           completedCount={completedVisualInspections}
           totalCount={5}
           status="Em andamento"

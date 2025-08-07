@@ -9,17 +9,22 @@ const StatusPanel = ({
 }) => {
   return (
     <div>
-      <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', fontWeight: '600' }}>{title}</h3>
+      <div className="card-header">
+        <h3 className="card-title">
+          <span>📊</span>
+          {title}
+        </h3>
+      </div>
       <div className="stats-grid">
         <div className="stat-item">
-          <div className="stat-icon success">📊</div>
+          <div className="stat-icon info">📈</div>
           <div className="stat-content">
-            <p className="stat-label">Verificações Concluídas</p>
+            <p className="stat-label">Concluídas</p>
             <p className="stat-value">{completedCount}/{totalCount}</p>
           </div>
         </div>
         <div className="stat-item">
-          <div className="stat-icon info">📋</div>
+          <div className="stat-icon success">✓</div>
           <div className="stat-content">
             <p className="stat-label">Status</p>
             <p className="stat-value">{status}</p>
@@ -27,7 +32,7 @@ const StatusPanel = ({
         </div>
         {additionalInfo.map((info, index) => (
           <div key={index} className="stat-item">
-            <div className="stat-icon info">📈</div>
+            <div className="stat-icon info">ℹ️</div>
             <div className="stat-content">
               <p className="stat-label">{info.label}</p>
               <p className="stat-value">{info.value}</p>
