@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import StatusPanel from './StatusPanel';
 import InspectionList from './InspectionList';
 import VideoControls from './VideoControls';
+import VideoStorageStatus from './VideoStorageStatus';
 
 const VisualInspectionsStage = ({ 
   currentStage,
@@ -139,6 +140,12 @@ const VisualInspectionsStage = ({
         {/* Tab Status */}
         {activeTab === 'status' && (
           <div className="status-tab">
+            {/* Video Storage Status */}
+            <VideoStorageStatus 
+              currentInspection={currentInspection}
+              visualInspections={visualInspections}
+            />
+            
             <div className="status-cards-mobile">
               <div className="status-card-mobile">
                 <div className="status-icon-mobile">📈</div>

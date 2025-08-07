@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { videoStorageManager } from '../../../utils/videoStorage';
 
 export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsComplete, nextInspection, resetCurrentInspection) => {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -8,6 +9,7 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   const [hasActiveCapture, setHasActiveCapture] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoBlob, setRecordedVideoBlob] = useState(null);
+  const [currentInspectionId, setCurrentInspectionId] = useState(null);
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -15,6 +17,11 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   const captureTimeRef = useRef(0);
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
+
+  // Set current inspection ID for video storage
+  const setInspectionId = (inspectionId) => {
+    setCurrentInspectionId(inspectionId);
+  };
 
   // Função 1: Iniciar Captura de Vídeo
   const startCapture = async () => {
@@ -80,6 +87,16 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
         const blob = new Blob(recordedChunksRef.current, {
           type: 'video/webm'
         });
+        
+        // Store video temporarily
+        if (currentInspectionId) {
+          console.log('📹 Storing temporary video for inspection:', currentInspectionId);
+          videoStorageManager.storeTempVideo(currentInspectionId, blob, {
+            inspectionName: `Inspection ${currentInspectionId}`,
+            captureSession: new Date().toISOString()
+          });
+        }
+        
         setRecordedVideoBlob(blob);
         setIsRecording(false);
       };
@@ -180,6 +197,13 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Função para lidar com confirmação de regravação
   const handleRerecordConfirm = () => {
     setShowRerecordPopup(false);
+    
+    // Clean up temporary video for current inspection
+    if (currentInspectionId) {
+      console.log('🧹 Cleaning up temporary video for re-recording:', currentInspectionId);
+      videoStorageManager.cleanupTempVideos([currentInspectionId]);
+    }
+    
     // Limpar vídeo gravado anterior
     setRecordedVideoBlob(null);
     // Resetar a inspeção atual para permitir nova gravação
@@ -190,6 +214,10 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Função para lidar com cancelamento de regravação
   const handleRerecordCancel = () => {
     setShowRerecordPopup(false);
+    
+    // Keep temporary video and proceed to next inspection
+    console.log('📹 Keeping temporary video, proceeding to next inspection');
+    
     // Ir para próxima inspeção automaticamente
     console.log('Indo para próxima inspeção');
     nextInspection();
@@ -224,6 +252,13 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Função para lidar com cancelamento de status da inspeção
   const handleStatusCancel = () => {
     setShowStatusPopup(false);
+    
+    // Clean up temporary video since user cancelled
+    if (currentInspectionId) {
+      console.log('🧹 Cleaning up temporary video (user cancelled):', currentInspectionId);
+      videoStorageManager.cleanupTempVideos([currentInspectionId]);
+    }
+    
     // Limpar vídeo gravado
     setRecordedVideoBlob(null);
     // Resetar a inspeção atual para permitir nova gravação
@@ -234,6 +269,12 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
   // Limpeza (useEffect)
   useEffect(() => {
     return () => {
+      // Clean up any temporary videos on component unmount
+      if (currentInspectionId) {
+        console.log('🧹 Component unmounting, cleaning up temporary video:', currentInspectionId);
+        videoStorageManager.cleanupTempVideos([currentInspectionId]);
+      }
+      
       stopCapture();
       stopVideoRecording();
       setShowRerecordPopup(false);
@@ -257,6 +298,7 @@ export const useVideoCapture = (addFrameToCurrentInspection, markInspectionAsCom
     handleRerecordConfirm,
     handleRerecordCancel,
     handleStatusConfirm,
-    handleStatusCancel
+    handleStatusCancel,
+    setInspectionId
   };
 }; 

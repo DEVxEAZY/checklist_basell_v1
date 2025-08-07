@@ -3,6 +3,7 @@ import ChecklistHistory from '../ChecklistHistory';
 import { generateChecklistWithData } from '../pdfTemplate';
 import { PDF_OPTIONS } from './constants/inspectionData';
 import { useSupabaseChecklistHistory } from '../../hooks/useSupabaseChecklistHistory';
+import { videoStorageManager } from '../../utils/videoStorage';
 
 // Hooks
 import { useBasicChecks } from './hooks/useBasicChecks';
@@ -75,7 +76,8 @@ const ConvertVideoToFrames = () => {
     handleRerecordConfirm,
     handleRerecordCancel,
     handleStatusConfirm,
-    handleStatusCancel
+    handleStatusCancel,
+    setInspectionId
   } = useVideoCapture(
     addFrameToCurrentInspection,
     (inspectionId, status) => markInspectionAsComplete(inspectionId || currentInspection, status),
@@ -83,26 +85,80 @@ const ConvertVideoToFrames = () => {
     resetCurrentInspection
   );
 
+  // Update video capture with current inspection ID
+  React.useEffect(() => {
+    if (currentInspection) {
+      setInspectionId(currentInspection);
+    }
+  }, [currentInspection, setInspectionId]);
+
   // Function to save current checklist
   const saveCurrentChecklist = async () => {
     if (loading) return;
     
+    console.log('💾 Saving checklist with video storage workflow');
+    
+    // Get all temporary videos before saving
+    const tempVideos = videoStorageManager.getAllTempVideos();
+    console.log('📹 Found temporary videos:', tempVideos.length);
+    
+    // Prepare visual inspections with temporary video data
+    const visualInspectionsWithVideos = visualInspections.map(inspection => {
+      const tempVideo = videoStorageManager.getTempVideo(inspection.id);
+      
+      if (tempVideo) {
+        console.log(`📹 Adding temporary video to inspection ${inspection.id}:`, {
+          hasBlob: !!tempVideo.blob,
+          size: tempVideo.size,
+          type: tempVideo.type
+        });
+        
+        return {
+          ...inspection,
+          videoData: {
+            dataUrl: URL.createObjectURL(tempVideo.blob),
+            blob: tempVideo.blob,
+            size: tempVideo.size,
+            type: tempVideo.type,
+            recordedAt: tempVideo.recordedAt
+          }
+        };
+      }
+      
+      return inspection;
+    });
+    
     const checklistData = {
       basicChecks: basicChecks,
-      visualInspections: visualInspections
+      visualInspections: visualInspectionsWithVideos
     };
 
     try {
       if (loadedChecklistId) {
         // Update existing checklist
         await updateChecklist(loadedChecklistId, checklistData, vehicleInfo);
+        
+        // Make all temporary videos permanent for this checklist
+        const inspectionIds = visualInspections.map(i => i.id);
+        await videoStorageManager.saveChecklistVideos(loadedChecklistId, inspectionIds);
+        
         alert('Checklist atualizado com sucesso!');
       } else {
         // Save new checklist
         const newId = await saveChecklist(checklistData, vehicleInfo);
+        
+        // Make all temporary videos permanent for this checklist
+        const inspectionIds = visualInspections.map(i => i.id);
+        await videoStorageManager.saveChecklistVideos(newId, inspectionIds);
+        
         setLoadedChecklistId(newId);
         alert('Checklist salvo com sucesso!');
       }
+      
+      // Log storage statistics after save
+      const stats = videoStorageManager.getStorageStats();
+      console.log('📊 Video storage stats after save:', stats);
+      
     } catch (error) {
       console.error('Error saving checklist:', error);
       alert('Erro ao salvar checklist. Verifique sua conexão.');
@@ -196,6 +252,10 @@ const ConvertVideoToFrames = () => {
   // Função 7: Limpar todas as verificações
   const clearAllChecks = () => {
     console.log('=== LIMPANDO CHECKLIST COMPLETO ===');
+    
+    // Clean up all temporary videos
+    const cleanedCount = videoStorageManager.cleanupTempVideos();
+    console.log('🧹 Cleaned up temporary videos:', cleanedCount);
     
     clearAllBasicChecks();
     clearAllVisualInspections();
